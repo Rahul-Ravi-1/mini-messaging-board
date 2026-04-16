@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message #<%= message.id %></title>
+</head>
+<body>
+    <h1>Message #<%= message.id %></h1>
+    <p><strong><%= message.user %></strong></p>
+    <p><%= message.text %></p>
+    <p><a href="/">← All messages</a></p>
+    <form action="/messages/<%= message.id %>/delete" method="post">
+        <button type="submit">Delete message</button>
+    </form>
+</body>
+</html>
