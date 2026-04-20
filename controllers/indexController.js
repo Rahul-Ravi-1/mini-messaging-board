@@ -23,6 +23,7 @@ function getForm(req, res) {
 
 function getMessage(req, res) {
   const id = Number(req.params.id);
+  
   if (!Number.isInteger(id) || id < 1) {
     return res.sendStatus(400);
   }

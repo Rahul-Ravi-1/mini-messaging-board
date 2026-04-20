@@ -17,5 +17,5 @@ app.listen(PORT, (error) => {
     throw error;
   }
   console.log(`Mini Messaging Board - listening on port ${PORT}!`);
-  console.log(`Try http://localhost:${PORT}/ and http://localhost:${PORT}/api`);
+    console.log(`Try http://localhost:${PORT}/`);
 });
