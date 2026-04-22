@@ -5,11 +5,13 @@ const messages = [
     id: nextMessageId++,
     text: "Hi there!",
     user: "Amando",
+    createdAt: new Date("2024-06-01T10:00:00"),
   },
   {
     id: nextMessageId++,
     text: "Hello World!",
     user: "Charles",
+    createdAt: new Date("2024-06-02T15:30:00"),
   },
 ];
 
@@ -39,6 +41,7 @@ function postForm(req, res) {
     id: nextMessageId++,
     text: req.body.text,
     user: req.body.user,
+    createdAt: new Date(),
   });
   res.redirect(303, "/");
 }
