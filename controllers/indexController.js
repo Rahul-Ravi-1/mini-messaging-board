@@ -1,63 +1,70 @@
-let nextMessageId = 1;
+const path = require("path");
+const queries = require(path.join(__dirname, "..", "db"));
 
-const messages = [
-  {
-    id: nextMessageId++,
-    text: "Hi there!",
-    user: "Amando",
-    createdAt: new Date("2024-06-01T10:00:00"),
-  },
-  {
-    id: nextMessageId++,
-    text: "Hello World!",
-    user: "Charles",
-    createdAt: new Date("2024-06-02T15:30:00"),
-  },
-];
+function rowToMessage(row) {
+  return {
+    id: row.id,
+    user: row.username,
+    text: row.text,
+    createdAt: row.added,
+  };
+}
 
-function getIndex(req, res) {
-  res.render("index", { messages: messages });
+async function getIndex(req, res, next) {
+  try {
+    const rows = await queries.getAllMessages();
+    res.render("index", { messages: rows.map(rowToMessage) });
+  } catch (err) {
+    next(err);
+  }
 }
 
 function getForm(req, res) {
   res.render("form");
 }
 
-function getMessage(req, res) {
+async function getMessage(req, res, next) {
   const id = Number(req.params.id);
-  
+
   if (!Number.isInteger(id) || id < 1) {
     return res.sendStatus(400);
   }
-  const message = messages.find((m) => m.id === id);
-  if (!message) {
-    return res.sendStatus(404);
+
+  try {
+    const row = await queries.getMessageById(id);
+    if (!row) {
+      return res.sendStatus(404);
+    }
+    res.render("message", { message: rowToMessage(row) });
+  } catch (err) {
+    next(err);
   }
-  res.render("message", { message });
 }
 
-function postForm(req, res) {
-  messages.push({
-    id: nextMessageId++,
-    text: req.body.text,
-    user: req.body.user,
-    createdAt: new Date(),
-  });
-  res.redirect(303, "/");
+async function postForm(req, res, next) {
+  try {
+    await queries.insertMessage(req.body.user, req.body.text);
+    res.redirect(303, "/");
+  } catch (err) {
+    next(err);
+  }
 }
 
-function deleteMessage(req, res){
+async function deleteMessage(req, res, next) {
   const id = Number(req.params.id);
-  if(!Number.isInteger(id) || id < 1)
-  {
+  if (!Number.isInteger(id) || id < 1) {
     return res.sendStatus(400);
   }
-  const index = messages.findIndex((m) => m.id === id);
-  if (index === -1) {
-    return res.sendStatus(404);
+
+  try {
+    const deleted = await queries.deleteMessageById(id);
+    if (!deleted) {
+      return res.sendStatus(404);
+    }
+    res.redirect(303, "/");
+  } catch (err) {
+    next(err);
   }
-  messages.splice(index, 1);
-  res.redirect(303, "/");
 }
 
 module.exports = { getIndex, getForm, getMessage, postForm, deleteMessage };
