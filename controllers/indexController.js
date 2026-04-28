@@ -6,7 +6,7 @@ function rowToMessage(row) {
     id: row.id,
     user: row.username,
     text: row.text,
-    createdAt: row.added,
+    createdAt: row.added
   };
 }
 
